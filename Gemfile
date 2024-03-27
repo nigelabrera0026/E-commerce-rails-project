@@ -77,3 +77,4 @@ gem "activeadmin"
 gem "devise"
 
 gem "sass-rails"
+
