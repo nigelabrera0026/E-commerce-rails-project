@@ -1,0 +1,27 @@
+
+<div class="container mt-3">
+  <h1 class="text-center mb-4">Product Category Details</h1>
+  <%= breadcrumbs(*@breadcrumbs) %>
+  <p>
+    <strong>Product:</strong>
+    <%= @product_category.product.name %>
+  </p>
+  <p>
+    <strong>Category:</strong>
+    <%= @product_category.category.name %>
+  </p>
+  <p>
+    <strong>Price:</strong>
+    <%= number_to_currency(@product_category.price) %>
+  </p>
+  <p>
+    <strong>Description:</strong>
+    <%= @product_category.description %>
+  </p>
+  <!-- Code to display image if it exists -->
+  <% if @product_category.image.attached? %>
+    <%= image_tag @product_category.image, class: 'img-fluid' %>
+  <% else %>
+    <p>No image available</p>
+  <% end %>
+</div>

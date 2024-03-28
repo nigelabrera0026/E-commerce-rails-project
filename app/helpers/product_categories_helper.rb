@@ -1,4 +1,4 @@
-module ApplicationHelper
+module ProductCategoriesHelper
   def breadcrumbs(*crumbs)
     content_tag :nav, aria: { label: 'breadcrumb' } do
       content_tag :ol, class: 'breadcrumb' do

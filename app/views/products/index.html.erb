@@ -21,7 +21,7 @@
                 No image available
               <% end %>
             </td>
-            <td><%= product_category.product.name %></td>
+            <td><%= link_to product_category.product.name, product_category_path(product_category) %></td>
             <td><%= product_category.category.name %></td>
             <td><%= number_to_currency(product_category.price) %></td>
           </tr>
