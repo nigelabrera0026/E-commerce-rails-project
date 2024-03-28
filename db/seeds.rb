@@ -11,6 +11,7 @@
 require "net/http"
 require "json"
 require "faker"
+require 'open-uri'
 
 # Admin
 AdminUser.create!(email:                 'admin@example.com',
@@ -30,7 +31,7 @@ head.each do |data|
 end
 
 # Product
-1000.times do
+20.times do
   Product.create!(name: Faker::Creature::Dog.name)
 end
 
@@ -119,6 +120,7 @@ province_tax = {
   }
 }
 
+# Province and Tax table
 province_tax.each do |name, rates|
   province = Province.create!(name: name)
 
@@ -138,6 +140,28 @@ province_tax.each do |name, rates|
   end
 end
 
+# inserting image
+ProductCategory.find_each do |product_category|
+  # Construct the API endpoint URL
+  category_name = product_category.category.name.downcase
+  api_url = "https://dog.ceo/api/breed/#{category_name}/images/random"
+
+  # Fetch the image URL from the API
+  begin
+    response = URI.open(api_url)
+    data = JSON.parse(response.read)
+    image_url = data['message']
+
+    # Attach the image to the product_category record
+    unless image_url.blank?
+      downloaded_image = URI.open(image_url)
+      product_category.image.attach(io: downloaded_image, filename: "category_#{product_category.id}.jpg")
+    end
+  rescue OpenURI::HTTPError => e
+    puts "Could not retrieve image for #{category_name}: #{e.message}"
+  end
+end
+
 # information about tax
 # GST and HST – The goods and services tax (GST)
 # is a tax that you pay on most goods and
@@ -149,8 +173,11 @@ end
 
 # Destroy Script in chronological order
 # AdminUser.destroy_all
+# ProductCategory.destroy_all
 # Category.destroy_all
 # Product.destroy_all
 # User.destroy_all
 # Tax.destroy_all
 # Province.destroy_all
+
+# run rails db:purge_db.rake

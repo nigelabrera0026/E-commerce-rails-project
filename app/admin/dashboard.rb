@@ -10,6 +10,31 @@ ActiveAdmin.register_page "Dashboard" do
       end
     end
 
+    section "Recent Product Categories" do
+      table_for ProductCategory.order("created_at desc").limit(5) do
+        column "Image" do |product_category|
+          if product_category.image.attached?
+            image_tag product_category.image, width: '50'
+          else
+            "No image available"
+          end
+        end
+        column :product
+        column :category
+        column :price
+        column :created_at
+        column "" do |product_category|
+          links = []
+          links << link_to('View', admin_product_category_path(product_category), class: 'member_link')
+          links << link_to('Edit', edit_admin_product_category_path(product_category), class: 'member_link')
+          links << link_to('Delete', admin_product_category_path(product_category), method: :delete, data: {
+            confirm: 'Are you sure you want to delete this?'
+            }, class: 'member_link delete_link')
+          links.join(' ').html_safe
+        end
+      end
+      strong { link_to "View All Product Categories", admin_product_categories_path }
+    end
     # Here is an example of a simple dashboard with columns and panels.
     #
     # columns do
