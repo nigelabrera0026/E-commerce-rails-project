@@ -14,8 +14,7 @@ ActiveAdmin.register ProductCategory do
   #   permitted << :other if params[:action] == 'create' && current_user.admin?
   #   permitted
   # end
-
-  permit_params :product_id, :category_id, :description, :price, :quantity, :image
+  permit_params :category_id, :description, :price, :quantity, :image, :product_name
 
   index do
     selectable_column
@@ -37,7 +36,8 @@ ActiveAdmin.register ProductCategory do
 
   form do |f|
     f.inputs 'Product Category Details' do
-      f.input :product, as: :select, collection: Product.pluck(:name, :id)
+      # Use a text input for product name instead of selecting product from dropdown
+      f.input :product_name, label: 'Product Name', input_html: { value: f.object.product&.name }
       f.input :category, as: :select, collection: Category.pluck(:name, :id)
       f.input :description
       f.input :price
@@ -69,4 +69,31 @@ ActiveAdmin.register ProductCategory do
     end
     active_admin_comments
   end
+
+  # Add the controller block to handle product name input
+  controller do
+    before_action :set_product, only: [:create, :update]
+
+    def create
+      @product_category = ProductCategory.new(permitted_params[:product_category])
+      @product_category.product = @product
+
+      super
+    end
+
+    def update
+      super do |format|
+        redirect_to admin_product_category_path(resource) and return if resource.valid?
+      end
+    end
+
+    private
+
+    def set_product
+      product_name = params[:product_category].delete(:product_name)
+      @product = Product.find_or_create_by(name: product_name) if product_name.present?
+    end
+  end
+
+
 end
