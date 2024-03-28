@@ -25,38 +25,26 @@ ActiveAdmin.register ProductCategory do
     column :description
     column :price
     column :quantity
-    column :created_at
     column "Image" do |product_category|
       if product_category.image.attached?
-        image_tag product_category.image, width: '50' # Adjust the width as needed
+        image_tag url_for(product_category.image), size: '50x50'
       else
-        "No image available"
+        'No image available'
       end
     end
     actions
   end
 
   form do |f|
-    f.inputs do
-      f.input :product
-      f.input :category
+    f.inputs 'Product Category Details' do
+      f.input :product, as: :select, collection: Product.pluck(:name, :id)
+      f.input :category, as: :select, collection: Category.pluck(:name, :id)
       f.input :description
       f.input :price
       f.input :quantity
-      f.input :image, as: :file
+      f.input :image, as: :file, hint: f.object.image.attached? ? image_tag(url_for(f.object.image), size: '50x50') : content_tag(:span, 'No image available')
     end
     f.actions
-  end
-
-  form do |f|
-    f.semantic_errors # shows errors on :base
-    f.inputs          # builds an input field for every attribute
-
-    f.inputs do
-      f.input :image, as: :file, hint: f.object.image.attached? ? image_tag(f.object.image) : content_tag(:span, "No image attached yet")
-    end
-
-    f.actions         # adds the 'Submit' and 'Cancel' buttons
   end
 
   filter :product
@@ -64,4 +52,21 @@ ActiveAdmin.register ProductCategory do
   filter :price
   filter :description
 
+  show do
+    attributes_table do
+      row :product
+      row :category
+      row :description
+      row :price
+      row :quantity
+      row :image do |product_category|
+        if product_category.image.attached?
+          image_tag url_for(product_category.image), size: '50x50'
+        else
+          'No image available'
+        end
+      end
+    end
+    active_admin_comments
+  end
 end

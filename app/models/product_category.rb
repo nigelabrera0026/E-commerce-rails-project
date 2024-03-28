@@ -12,11 +12,10 @@ class ProductCategory < ApplicationRecord
 
   # Ransackable Associations
   def self.ransackable_associations(auth_object = nil)
-    # Only allow searching on these associations
     %w[product category]
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[id product_id category_id price quantity created_at updated_at] # Update this list with the attributes you want searchable
+    %w[id product_id category_id description price quantity created_at updated_at]
   end
 end
