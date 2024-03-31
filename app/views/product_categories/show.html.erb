@@ -18,7 +18,7 @@
     <strong>Description:</strong>
     <%= @product_category.description %>
   </p>
-  <!-- Code to display image if it exists -->
+  <!-- display image if it exists -->
   <% if @product_category.image.attached? %>
     <%= image_tag @product_category.image, class: 'img-fluid' %>
   <% else %>

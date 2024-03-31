@@ -162,6 +162,11 @@ ProductCategory.find_each do |product_category|
   end
 end
 
+# Temporarily insert something in the page
+PageContent.create(title: 'About Us', content: 'This is about us.', page_name: 'about')
+PageContent.create(title: 'Contact Us', content: 'Contact us here.', page_name: 'contact')
+
+
 # information about tax
 # GST and HST – The goods and services tax (GST)
 # is a tax that you pay on most goods and
