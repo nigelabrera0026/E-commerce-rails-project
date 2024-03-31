@@ -3,7 +3,8 @@ class ProductsController < ApplicationController
 
 
   def index
-    @product_categories = ProductCategory.page(params[:page]).per(10) # Adjust the number per page as desired
+    @q = ProductCategory.ransack(params[:q])
+    @product_categories = @q.result.includes(:category).page(params[:page]).per(10)
   end
 
   def show
@@ -11,9 +12,7 @@ class ProductsController < ApplicationController
   end
 
   private
-
   def set_product_category
     @product_category = ProductCategory.find(params[:id])
   end
-
 end

@@ -14,24 +14,24 @@ require "faker"
 require 'open-uri'
 
 # Admin
-AdminUser.create!(email:                 'admin@example.com',
-                  password:              'password',
-                  password_confirmation: 'password') if Rails.env.development?
+# AdminUser.create!(email:                 'admin@example.com',
+#                   password:              'password',
+#                   password_confirmation: 'password') if Rails.env.development?
 
 # Category
-url = URI("https://dog.ceo/api/breeds/list/all")
-response = Net::HTTP.get(url)
-breed = JSON.parse(response)
+# url = URI("https://dog.ceo/api/breeds/list/all")
+# response = Net::HTTP.get(url)
+# breed = JSON.parse(response)
 
 # Pointing to the head of the json
-head = breed["message"].keys
+# head = breed["message"].keys
 
-head.each do |data|
-  Category.create!(name: data)
-end
+# head.each do |data|
+#   Category.create!(name: data)
+# end
 
 # Product
-20.times do
+1000.times do
   Product.create!(name: Faker::Creature::Dog.name)
 end
 
@@ -52,95 +52,95 @@ Product.find_each do |product|
 end
 
 # Province and Tax table
-province_tax = {
-  "Alberta" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => nil
-  },
-  "British Columbia" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => 7
-  },
-  "Manitoba" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => 7
-  },
-  "New Brunswick" => {
-    "GST" => nil,
-    "HST" => 15,
-    "PST" => nil
-  },
-  "Newfoundland and Labrador" => {
-    "GST" => nil,
-    "HST" => 15,
-    "PST" => nil
-  },
-  "Northwest Territories" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => nil
-  },
-  "Nova Scotia" => {
-    "GST" => nil,
-    "HST" => 15,
-    "PST" => nil
-  },
-  "Nunavut" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => nil
-  },
-  "Ontario" => {
-    "GST" => nil,
-    "HST" => 13,
-    "PST" => nil
-  },
-  "Prince Edward Island" => {
-    "GST" => nil,
-    "HST" => 15,
-    "PST" => nil
-  },
-  "Quebec" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => 9.975
-  },
-  "Saskatchewan" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => 6
-    },
-  "Yukon" => {
-    "GST" => 5,
-    "HST" => nil,
-    "PST" => nil
-  }
-}
+# province_tax = {
+#   "Alberta" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => nil
+#   },
+#   "British Columbia" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => 7
+#   },
+#   "Manitoba" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => 7
+#   },
+#   "New Brunswick" => {
+#     "GST" => nil,
+#     "HST" => 15,
+#     "PST" => nil
+#   },
+#   "Newfoundland and Labrador" => {
+#     "GST" => nil,
+#     "HST" => 15,
+#     "PST" => nil
+#   },
+#   "Northwest Territories" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => nil
+#   },
+#   "Nova Scotia" => {
+#     "GST" => nil,
+#     "HST" => 15,
+#     "PST" => nil
+#   },
+#   "Nunavut" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => nil
+#   },
+#   "Ontario" => {
+#     "GST" => nil,
+#     "HST" => 13,
+#     "PST" => nil
+#   },
+#   "Prince Edward Island" => {
+#     "GST" => nil,
+#     "HST" => 15,
+#     "PST" => nil
+#   },
+#   "Quebec" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => 9.975
+#   },
+#   "Saskatchewan" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => 6
+#     },
+#   "Yukon" => {
+#     "GST" => 5,
+#     "HST" => nil,
+#     "PST" => nil
+#   }
+# }
 
 # Province and Tax table
-province_tax.each do |name, rates|
-  province = Province.create!(name: name)
+# province_tax.each do |name, rates|
+#   province = Province.create!(name: name)
 
-  rates.each do |tax_name, val|
-    next if val.nil?
+#   rates.each do |tax_name, val|
+#     next if val.nil?
 
-    tax_record = Tax.find_or_initialize_by(province_id: province.id)
-    case tax_name
-    when "GST"
-      tax_record.gst = val / 100.0
-    when "PST"
-      tax_record.pst = val / 100.0
-    when "HST"
-      tax_record.hst = val / 100.0
-    end
-    tax_record.save!
-  end
-end
+#     tax_record = Tax.find_or_initialize_by(province_id: province.id)
+#     case tax_name
+#     when "GST"
+#       tax_record.gst = val / 100.0
+#     when "PST"
+#       tax_record.pst = val / 100.0
+#     when "HST"
+#       tax_record.hst = val / 100.0
+#     end
+#     tax_record.save!
+#   end
+# end
 
-# inserting image
+# inserting image and associations for the products
 ProductCategory.find_each do |product_category|
   # Construct the API endpoint URL
   category_name = product_category.category.name.downcase
@@ -163,9 +163,8 @@ ProductCategory.find_each do |product_category|
 end
 
 # Temporarily insert something in the page
-PageContent.create(title: 'About Us', content: 'This is about us.', page_name: 'about')
-PageContent.create(title: 'Contact Us', content: 'Contact us here.', page_name: 'contact')
-
+# PageContent.create(title: 'About Us', content: 'This is about us.', page_name: 'about')
+# PageContent.create(title: 'Contact Us', content: 'Contact us here.', page_name: 'contact')
 
 # information about tax
 # GST and HST – The goods and services tax (GST)

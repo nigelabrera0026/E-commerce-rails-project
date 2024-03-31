@@ -12,6 +12,11 @@
         </tr>
       </thead>
       <tbody>
+        <%= search_form_for @q, url: products_path, method: :get do |f| %>
+          <%= f.label :category_id_eq, 'Category' %>
+          <%= f.select :category_id_eq, Category.order(:name).pluck(:name, :id), include_blank: 'All Categories' %>
+          <%= f.submit 'Filter' %>
+        <% end %>
         <% @product_categories.each do |product_category| %>
           <tr>
             <td>
