@@ -1,19 +1,4 @@
 ActiveAdmin.register ProductCategory do
-
-  # See permitted parameters documentation:
-  # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-  #
-  # Uncomment all parameters which should be permitted for assignment
-  #
-  # permit_params :product_id, :category_id, :description, :price, :quantity
-  #
-  # or
-  #
-  # permit_params do
-  #   permitted = [:product_id, :category_id, :description, :price, :quantity]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
   permit_params :category_id, :description, :price, :quantity, :image, :product_name
 
   index do
@@ -36,16 +21,43 @@ ActiveAdmin.register ProductCategory do
 
   form do |f|
     f.inputs 'Product Category Details' do
-      # Use a text input for product name instead of selecting product from dropdown
-      f.input :product_name, label: 'Product Name', input_html: { value: f.object.product&.name }
+      f.input :product_name, as: :string, label: 'Product Name'
       f.input :category, as: :select, collection: Category.pluck(:name, :id)
       f.input :description
       f.input :price
       f.input :quantity
-      f.input :image, as: :file, hint: f.object.image.attached? ? image_tag(url_for(f.object.image), size: '50x50') : content_tag(:span, 'No image available')
+      f.input :image, as: :file, input_html: { id: 'image-upload' }
+
+      # The div for image preview should be here, outside of javascript_tag
+      div id: 'image-preview', style: 'margin-top: 20px'
     end
     f.actions
+
+    # JavaScript for image preview
+    f.template.javascript_tag do
+      <<-JS
+        document.addEventListener('DOMContentLoaded', function() {
+          var input = document.getElementById('image-upload');
+          input.addEventListener('change', function(e) {
+            if (input.files && input.files[0]) {
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                var preview = document.getElementById('image-preview');
+                preview.innerHTML = ''; // Clear previous images
+                var img = new Image();
+                img.src = e.target.result;
+                img.style.maxWidth = '500px';
+                img.style.maxHeight = '500px';
+                preview.appendChild(img);
+              }
+              reader.readAsDataURL(input.files[0]);
+            }
+          });
+        });
+      JS
+    end
   end
+
 
   filter :product
   filter :category
@@ -70,14 +82,12 @@ ActiveAdmin.register ProductCategory do
     active_admin_comments
   end
 
-  # Add the controller block to handle product name input
   controller do
     before_action :set_product, only: [:create, :update]
 
     def create
       @product_category = ProductCategory.new(permitted_params[:product_category])
       @product_category.product = @product
-
       super
     end
 
@@ -90,10 +100,8 @@ ActiveAdmin.register ProductCategory do
     private
 
     def set_product
-      product_name = params[:product_category].delete(:product_name)
+      product_name = params[:product_category][:product_name]
       @product = Product.find_or_create_by(name: product_name) if product_name.present?
     end
   end
-
-
 end

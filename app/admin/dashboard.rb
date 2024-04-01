@@ -14,7 +14,7 @@ ActiveAdmin.register_page "Dashboard" do
       table_for ProductCategory.order("created_at desc").limit(5) do
         column "Image" do |product_category|
           if product_category.image.attached?
-            image_tag product_category.image, width: '50'
+            image_tag product_category.image, width: '50', heigth: '50'
           else
             "No image available"
           end
