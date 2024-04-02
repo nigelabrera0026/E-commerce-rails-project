@@ -13,9 +13,8 @@ Rails.application.routes.draw do
   get 'about', to: 'pages#about'
   get 'contact', to: 'pages#contact'
 
-
   resources :products, only: [:show, :index]
-  resources :product_categories, only: [:show]
+  resources :product_categories, only: [:index,:show]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

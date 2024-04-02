@@ -22,3 +22,8 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+
+TODO:
+
+  re-style bootstrap for the images to be fitted

@@ -1,25 +1,29 @@
-<!-- app/views/products/index.html.erb -->
 <div class="container mt-3">
   <h1 class="text-center mb-4">Our Products</h1>
-
+  <!-- Filtration bar -->
   <%= search_form_for @q, url: products_path, html: { class: "search-form mb-4" } do |f| %>
     <div class="row mb-3">
+      <!-- On Sale Filter -->
       <div class="col">
         <%= f.label :on_sale_eq, 'On Sale' %>
         <%= f.check_box :on_sale_eq, {}, true, false %>
       </div>
-      <div class="col">
-        <%= f.label :created_at_gteq, 'Newly Added After' %>
-        <%= f.date_field :created_at_gteq, include_blank: true %>
-      </div>
-      <div class="col">
-        <%= f.label :updated_at_gteq, 'Recently Updated After' %>
-        <%= f.date_field :updated_at_gteq, include_blank: true %>
-      </div>
+      <!-- Category Filter -->
       <div class="col">
         <%= f.label :category_id_eq, 'Category' %>
         <%= f.collection_select :category_id_eq, Category.order(:name), :id, :name, include_blank: true %>
       </div>
+      <!-- New Products Filter -->
+      <div class="col">
+        <%= label_tag :new_products, 'New Products' %>
+        <%= check_box_tag :new_products, '1', params[:new_products].present? %>
+      </div>
+      <!-- Recently Updated Filter -->
+      <div class="col">
+         <%= label_tag :recently_updated, 'Recently Updated' %>
+         <%= check_box_tag :recently_updated, '1', params[:recently_updated].present? %>
+      </div>
+      <!-- Submit Button -->
       <div class="col">
         <%= f.submit 'Filter', class: 'btn btn-primary' %>
       </div>
@@ -35,23 +39,20 @@
           <% else %>
             <%= image_tag 'placeholder-image.png', class: 'card-img-top' %>
           <% end %>
-
-          <% if product_category.on_sale %>
-            <span class="badge badge-success">On Sale!</span>
-          <% end %>
-
           <div class="card-body">
             <h5 class="card-title">
               <%= link_to product_category.product.name, product_category_path(product_category) %>
             </h5>
             <p class="card-text"><%= product_category.category.name %></p>
             <p class="card-text"><%= number_to_currency(product_category.price) %></p>
+            <% if product_category.on_sale %>
+              <div style="color: red; font-weight: bold;">On Sale!</div>
+            <% end %>
           </div>
         </div>
       </div>
     <% end %>
   </div>
-
   <div class="pagination justify-content-center">
     <%= paginate @product_categories %>
   </div>

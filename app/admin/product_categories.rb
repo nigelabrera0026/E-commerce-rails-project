@@ -1,6 +1,5 @@
 ActiveAdmin.register ProductCategory do
-  permit_params :category_id, :description, :price, :quantity, :image, :product_name
-
+  permit_params :product_id, :category_id, :description, :price, :quantity, :image, :on_sale
   index do
     selectable_column
     id_column
@@ -21,7 +20,7 @@ ActiveAdmin.register ProductCategory do
 
   form do |f|
     f.inputs 'Product Category Details' do
-      f.input :product_name, as: :string, label: 'Product Name'
+      f.input :product_name, input_html: { value: f.object.product.name }
       f.input :category, as: :select, collection: Category.pluck(:name, :id)
       f.input :description
       f.input :price
@@ -32,30 +31,6 @@ ActiveAdmin.register ProductCategory do
       div id: 'image-preview', style: 'margin-top: 20px'
     end
     f.actions
-
-    # JavaScript for image preview
-    f.template.javascript_tag do
-      <<-JS
-        document.addEventListener('DOMContentLoaded', function() {
-          var input = document.getElementById('image-upload');
-          input.addEventListener('change', function(e) {
-            if (input.files && input.files[0]) {
-              var reader = new FileReader();
-              reader.onload = function(e) {
-                var preview = document.getElementById('image-preview');
-                preview.innerHTML = ''; // Clear previous images
-                var img = new Image();
-                img.src = e.target.result;
-                img.style.maxWidth = '500px';
-                img.style.maxHeight = '500px';
-                preview.appendChild(img);
-              }
-              reader.readAsDataURL(input.files[0]);
-            }
-          });
-        });
-      JS
-    end
   end
 
 
@@ -92,8 +67,8 @@ ActiveAdmin.register ProductCategory do
     end
 
     def update
-      super do |format|
-        redirect_to admin_product_category_path(resource) and return if resource.valid?
+      super do |success, failure|
+        success.html { redirect_to admin_product_category_path(resource) } if resource.valid?
       end
     end
 
@@ -101,7 +76,10 @@ ActiveAdmin.register ProductCategory do
 
     def set_product
       product_name = params[:product_category][:product_name]
-      @product = Product.find_or_create_by(name: product_name) if product_name.present?
+      if product_name.present?
+        @product = Product.find_or_create_by(name: product_name)
+        params[:product_category][:product_id] = @product.id # Assign the found or created product's ID
+      end
     end
   end
 end
