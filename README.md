@@ -23,7 +23,6 @@ Things you may want to cover:
 
 * ...
 
+What to show in Brian.
+config/environment/development.rb for active storage.
 
-TODO:
-
-  re-style bootstrap for the images to be fitted

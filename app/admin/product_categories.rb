@@ -1,9 +1,10 @@
 ActiveAdmin.register ProductCategory do
-  permit_params :product_id, :category_id, :description, :price, :quantity, :image, :on_sale
+  permit_params :product_id, :category_id, :description, :price, :quantity, :image, :on_sale, :product_name
+
   index do
     selectable_column
     id_column
-    column :product
+    column :product_name
     column :category
     column :description
     column :price
@@ -15,29 +16,32 @@ ActiveAdmin.register ProductCategory do
         'No image available'
       end
     end
+    column :on_sale
+    column :created_at
     actions
   end
 
+
   form do |f|
     f.inputs 'Product Category Details' do
-      f.input :product_name, input_html: { value: f.object.product.name }
-      f.input :category, as: :select, collection: Category.pluck(:name, :id)
+      # If ProductCategory has product_id, use it to find and set the product.
+      # Otherwise, the field will be blank ready for a new association.
+      f.input :product_name, as: :string, input_html: { value: f.object.product&.name }
+      f.input :category, as: :select, collection: Category.pluck(:name, :id), include_blank: 'None'
       f.input :description
       f.input :price
       f.input :quantity
+      f.input :on_sale
       f.input :image, as: :file, input_html: { id: 'image-upload' }
-
-      # The div for image preview should be here, outside of javascript_tag
-      div id: 'image-preview', style: 'margin-top: 20px'
     end
     f.actions
   end
-
 
   filter :product
   filter :category
   filter :price
   filter :description
+  filter :on_sale
 
   show do
     attributes_table do
@@ -46,8 +50,11 @@ ActiveAdmin.register ProductCategory do
       row :description
       row :price
       row :quantity
+      row :on_sale
+      row :created_at
       row :image do |product_category|
         if product_category.image.attached?
+          # Specify size
           image_tag url_for(product_category.image), size: '50x50'
         else
           'No image available'

@@ -1,0 +1,31 @@
+.uniform-image {
+  width: 100%; /* Make the image use the full width of its container */
+  height: 250px; /* Set a fixed height for all images */
+  object-fit: cover; /* This will cover the area of the box without distorting the aspect ratio */
+  object-position: center; /* Center the image within the element's box */
+}
+
+.search-form {
+  .form-label {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+  }
+  .form-check-input {
+    margin-top: 0.3rem;
+    margin-left: 0.5rem;
+  }
+  .form-select {
+    display: block;
+    width: 100%;
+  }
+  .btn-block {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-form .btn-block {
+    width: auto; 
+  }
+}

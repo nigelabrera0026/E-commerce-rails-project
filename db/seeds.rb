@@ -32,7 +32,7 @@ require 'open-uri'
 
 # Product
 # 1000.times do
-#   Product.create!(name: Faker::Creature::Dog.name)
+#   Product.create!(name: Faker::Creature::Dog.name + Faker::Creature::Dog.name)
 # end
 
 # Product category
@@ -158,20 +158,67 @@ require 'open-uri'
 #       product_category.image.attach(io: downloaded_image, filename: "category_#{product_category.id}.jpg")
 #     end
 #   rescue OpenURI::HTTPError => e
-#     puts "Could not retrieve image for #{category_name}: #{e.message}"
+#     Rails.logger.error "Could not retrieve image for #{category_name}: #{e.message}"
 #   end
 # end
 
 # Implementation of on sale
-on_sale_product_categories = ProductCategory.order(Arel.sql('RANDOM()')).limit(50)
+# on_sale_product_categories = ProductCategory.order(Arel.sql('RANDOM()')).limit(50)
 
-on_sale_product_categories.each do |product_category|
-  product_category.update(on_sale: true)
-end
+# on_sale_product_categories.each do |product_category|
+#   product_category.update(on_sale: true)
+# end
 
 # Temporarily insert something in the page
 # PageContent.create(title: 'About Us', content: 'This is about us.', page_name: 'about')
 # PageContent.create(title: 'Contact Us', content: 'Contact us here.', page_name: 'contact')
+
+# Seeding new product
+# Product
+recent_products = []
+2.times do
+  recent_products << Product.create!(name: Faker::Creature::Dog.name + Faker::Creature::Dog.name)
+end
+
+# Product category
+assign_breed = Category.pluck(:id)
+
+# Only create product categories for the recently created products
+recent_product_categories = []
+recent_products.each do |product|
+  cat_id = assign_breed.sample
+
+  recent_product_categories << ProductCategory.find_or_create_by!(
+    product_id: product.id,
+    category_id: cat_id
+  ) do |prodcat|
+    prodcat.description = Faker::JapaneseMedia::StudioGhibli.quote
+    prodcat.price = rand(100.0..3000.0).round(2)
+    prodcat.quantity = rand(1..10)
+  end
+end
+
+# inserting image and associations for the recently created product categories
+recent_product_categories.each do |product_category|
+  # Construct the API endpoint URL
+  category_name = product_category.category.name.downcase
+  api_url = "https://dog.ceo/api/breed/#{category_name}/images/random"
+
+  # Fetch the image URL from the API
+  begin
+    response = URI.open(api_url)
+    data = JSON.parse(response.read)
+    image_url = data['message']
+
+    # Attach the image to the product_category record
+    unless image_url.blank?
+      downloaded_image = URI.open(image_url)
+      product_category.image.attach(io: downloaded_image, filename: "category_#{product_category.id}.jpg")
+    end
+  rescue OpenURI::HTTPError => e
+    Rails.logger.error "Could not retrieve image for #{category_name}: #{e.message}"
+  end
+end
 
 # information about tax
 # GST and HST – The goods and services tax (GST)

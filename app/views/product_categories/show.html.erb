@@ -19,7 +19,7 @@
     <%= @product_category.description %>
   </p>
   <% if @product_category.on_sale %>
-    <div class="badge badge-success">On Sale!</div>
+    <div style="color: red; font-weight: bold;">On Sale!</div>
   <% end %>
   <!-- display image if it exists -->
   <% if @product_category.image.attached? %>
