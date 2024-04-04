@@ -69,21 +69,12 @@ group :test do
 end
 
 gem "faker"
-
 gem "kaminari"
-
 gem "activeadmin"
-
 gem "devise"
-
 gem "sass-rails"
-
 gem "cssbundling-rails", "~> 1.4"
-
 gem "jsbundling-rails", "~> 1.3"
-
 gem "ransack"
-
 gem "rubocop"
-
 gem "rubocop-rails"
