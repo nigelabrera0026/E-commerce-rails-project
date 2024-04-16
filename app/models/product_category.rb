@@ -25,12 +25,12 @@ class ProductCategory < ApplicationRecord
   scope :recently_updated, -> { where("updated_at >= ?", 3.days.ago) }
 
   # Ransackable Associations
-  # def self.ransackable_associations(auth_object = nil)
-  #   %w[product category]
-  # end
+  def self.ransackable_associations(auth_object = nil)
+    %w[product category]
+  end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[id product_id category_id description price quantity created_at updated_at product category]
+    %w[id product_id category_id description price quantity created_at updated_at]
     super + %w[on_sale]
   end
 
