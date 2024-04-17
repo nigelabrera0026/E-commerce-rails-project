@@ -1,34 +1,53 @@
 <div class="container mt-3">
   <h1 class="text-center mb-4">Our Products</h1>
-  <!-- Filtration bar -->
-  <%= search_form_for @q, url: products_path, html: { class: "search-form row g-3 mb-4" } do |f| %>
-    <!-- On Sale Filter -->
-    <div class="col-md-3">
-      <div class="form-check">
-        <%= f.check_box :on_sale_eq, { class: 'form-check-input', id: 'on_sale' }, true, false %>
-        <%= f.label :on_sale_eq, 'On Sale', class: 'form-check-label', for: 'on_sale' %>
-      </div>
-    </div>
-    <!-- Category Filter -->
-    <div class="col-md-3">
-      <%= f.label :category_id_eq, 'Category', class: 'form-label' %>
-      <%= f.collection_select :category_id_eq, Category.order(:name), :id, :name, { include_blank: true }, { class: 'form-select' } %>
-    </div>
-    <!-- New Products Filter -->
-    <div class="col-md-3">
-      <div class="form-check">
-        <%= check_box_tag :new_products, '1', params[:new_products].present?, { class: 'form-check-input', id: 'new_products' } %>
-        <%= label_tag :new_products, 'New Products', class: 'form-check-label', for: 'new_products' %>
-      </div>
-    </div>
-    <!-- Recently Updated Filter -->
 
-    <!-- Submit Button -->
-    <div class="col-12">
-      <%= f.submit 'Filter', class: 'btn btn-primary' %>
+  <!-- Form for Search by Keyword and Category -->
+  <%= form_with(url: products_path, method: :get, local: true, html: { class: "search-form row g-3 mb-4" }) do %>
+    <!-- Keyword Search Filter -->
+    <div class="col-md-6">
+      <%= label_tag :keyword, 'Search:', class: 'form-label' %>
+      <%= text_field_tag :keyword, params[:keyword], class: 'form-control', placeholder: 'Name or Description' %>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="col-md-4">
+      <%= label_tag :category_id, 'Filter by category:', class: 'form-label' %>
+      <%= select_tag :category_id, options_for_select(Category.order(:name).map { |c| [c.name, c.id] }.prepend(['None', '']), selected: params[:category_id]), include_blank: false, class: 'form-select' %>
+    </div>
+
+    <!-- Submit Button for Search and Category -->
+    <div class="col-md-2">
+      <%= submit_tag 'Search', class: 'btn btn-primary' %>
     </div>
   <% end %>
 
+  <!-- Form for Filtering by On Sale, New Products, and Recently Updated -->
+  <%= form_with(url: products_path, method: :get, local: true, html: { class: "filters-form row g-3 mb-4" }) do %>
+    <!-- On Sale Filter -->
+    <div class="col-md-3">
+      <%= check_box_tag :on_sale, '1', params[:on_sale] %>
+      <%= label_tag :on_sale, 'On Sale' %>
+    </div>
+
+    <!-- New Products Filter -->
+    <div class="col-md-3">
+      <%= check_box_tag :new_products, '1', params[:new_products] %>
+      <%= label_tag :new_products, 'New Products' %>
+    </div>
+
+    <!-- Recently Updated Filter -->
+    <div class="col-md-3">
+      <%= check_box_tag :recently_updated, '1', params[:recently_updated] %>
+      <%= label_tag :recently_updated, 'Recently Updated' %>
+    </div>
+
+    <!-- Submit Button for Filters -->
+    <div class="col-md-3">
+      <%= submit_tag 'Apply Filters', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+
+  <!-- Products List -->
   <div class="row">
     <% @product_categories.each do |product_category| %>
       <div class="col-md-4 mb-4">
@@ -47,11 +66,16 @@
             <% if product_category.on_sale %>
               <div style="color: red; font-weight: bold;">On Sale!</div>
             <% end %>
+            <p class="card-text">
+              <%= truncate(product_category.description, length: 100) %>
+            </p>
           </div>
         </div>
       </div>
     <% end %>
   </div>
+
+  <!-- Pagination -->
   <div class="pagination justify-content-center">
     <%= paginate @product_categories %>
   </div>

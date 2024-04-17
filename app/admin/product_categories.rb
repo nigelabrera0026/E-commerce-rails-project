@@ -1,6 +1,6 @@
 ActiveAdmin.register ProductCategory do
   permit_params :product_id, :category_id, :description, :price, :quantity, :image, :on_sale, :product_name
-
+  menu label: 'Products'
   index do
     selectable_column
     id_column
