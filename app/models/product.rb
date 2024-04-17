@@ -22,4 +22,20 @@ class Product < ApplicationRecord
   def self.ransackable_associations(auth_object = nil)
     %w[product_categories orders]
   end
+
+  def add_to_cart
+    product_id = params[:product_id]
+    quantity = (params[:quantity] || 1).to_i
+
+    # Load the current cart from the session or initialize it as an empty Hash
+    cart = session[:cart] || {}
+
+    # Update the quantity for the given product
+    cart[product_id] = (cart[product_id] || 0) + quantity
+
+    # Save the updated cart back into the session
+    session[:cart] = cart
+
+    redirect_to products_path, notice: 'Product added to cart'
+  end
 end

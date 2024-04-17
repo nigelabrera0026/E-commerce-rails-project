@@ -23,6 +23,4 @@ Things you may want to cover:
 
 * ...
 
-What to show in Brian.
-config/environment/development.rb for active storage.
 

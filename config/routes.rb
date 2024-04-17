@@ -12,10 +12,12 @@ Rails.application.routes.draw do
 
   get 'about', to: 'pages#about'
   get 'contact', to: 'pages#contact'
+  # post 'products/:id/add_to_cart', to: 'products#add_to_cart', as: 'add_to_cart'
+
 
   resources :products, only: [:show, :index]
   resources :product_categories, only: [:index,:show]
-
+  # get 'cart', to: 'carts#show', as: 'cart'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

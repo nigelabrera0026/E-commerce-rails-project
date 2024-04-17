@@ -47,6 +47,12 @@
     </div>
   <% end %>
 
+  <!-- Form for Filtering by On Sale, New Products, and Recently Updated -->
+  <%= form_with(url: products_path, method: :get, local: true, id: 'auto-submit-category-form', html: { class: "category-auto-submit-form" }) do %>
+    <%= label_tag :auto_category_id, 'Filter by category:', class: 'form-label' %>
+    <%= select_tag :category_id, options_for_select(Category.order(:name).map { |c| [c.name, c.id] }, selected: params[:category_id]), onchange: 'this.form.submit()', include_blank: 'All Categories', class: 'form-select' %>
+  <% end %>
+
   <!-- Products List -->
   <div class="row">
     <% @product_categories.each do |product_category| %>
@@ -70,6 +76,13 @@
               <%= truncate(product_category.description, length: 100) %>
             </p>
           </div>
+          <%
+=begin%>
+ <div class="card-footer">
+            <%= button_to 'Add to Cart', add_to_cart_path(product_id: product_category.product.id), method: :post, class: 'btn btn-primary' %>
+          </div>
+<%
+=end%>
         </div>
       </div>
     <% end %>
