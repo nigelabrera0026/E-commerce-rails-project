@@ -1,5 +1,5 @@
 <div class="container mt-3">
-  <h1 class="text-center mb-4">Our Products</h1>
+  <h1 class="text-center mb-4">Tasty Dogs</h1>
 
   <!-- Form for Search by Keyword and Category -->
   <%= form_with(url: products_path, method: :get, local: true, html: { class: "search-form row g-3 mb-4" }) do %>
@@ -20,6 +20,7 @@
       <%= submit_tag 'Search', class: 'btn btn-primary' %>
     </div>
   <% end %>
+
 
   <!-- Form for Filtering by On Sale, New Products, and Recently Updated -->
   <%= form_with(url: products_path, method: :get, local: true, html: { class: "filters-form row g-3 mb-4" }) do %>
@@ -47,7 +48,7 @@
     </div>
   <% end %>
 
-  <!-- Form for Filtering by On Sale, New Products, and Recently Updated -->
+  <!-- Form for Filtering by category -->
   <%= form_with(url: products_path, method: :get, local: true, id: 'auto-submit-category-form', html: { class: "category-auto-submit-form" }) do %>
     <%= label_tag :auto_category_id, 'Filter by category:', class: 'form-label' %>
     <%= select_tag :category_id, options_for_select(Category.order(:name).map { |c| [c.name, c.id] }, selected: params[:category_id]), onchange: 'this.form.submit()', include_blank: 'All Categories', class: 'form-select' %>
